@@ -4,20 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Cassette Box</title>
+    <title>NGEO</title>
     <link rel="icon" type="image/gif" href="assets/layout/favicon.gif">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://ngeo.website/">
-    <meta property="og:title" content="3D Cassette Box">
+    <meta property="og:title" content="NGEO">
     <meta property="og:description" content="NGEO is an emergent property of the space of variations.">
     <meta property="og:image" content="https://ngeo.website/assets/layout/og.png">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://ngeo.website/">
-    <meta property="twitter:title" content="3D Cassette Box">
+    <meta property="twitter:title" content="NGEO">
     <meta property="twitter:description" content="NGEO is an emergent property of the space of variations.">
     <meta property="twitter:image" content="https://ngeo.website/assets/layout/og.png">
     <style>
@@ -296,8 +296,8 @@
             flex-direction: row;
             color: #ffffff;
             font-family: 'Eurostile', sans-serif;
-            font-size: 2.6em;
-            /* Requested size */
+            font-size: clamp(1.2rem, 4vw, 2.6em);
+            /* Fluid Typography */
             line-height: 1.4;
             overflow: hidden;
             padding-bottom: 120px;
@@ -365,6 +365,32 @@
 
         svg {
             fill: currentColor;
+        }
+
+        /* MOBILE MANIFESTO OVERRIDES */
+        @media (max-width: 768px) {
+            #manifesto-overlay {
+                flex-direction: column;
+                overflow-y: auto;
+                /* Enable scrolling */
+                padding-top: 60px;
+                /* Space for close btn */
+                padding-bottom: 150px;
+                /* Space for player */
+            }
+
+            .manifesto-column {
+                width: 100%;
+                height: auto;
+                padding: 30px;
+                padding-bottom: 20px;
+                justify-content: flex-start;
+            }
+
+            .close-btn {
+                top: 20px;
+                right: 20px;
+            }
         }
     </style>
 </head>
@@ -582,6 +608,35 @@
                 console.error("Error generating waveform:", e);
                 waveformPeaks = [];
             }
+            // MEDIA SESSION METADATA
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: track.displayTitle,
+                    artist: "中国 AI 研究院",
+                    album: "NGEO",
+                    artwork: [
+                        { src: 'assets/layout/logo.png', sizes: '96x96', type: 'image/png' },
+                        { src: 'assets/layout/logo.png', sizes: '128x128', type: 'image/png' },
+                        { src: 'assets/layout/logo.png', sizes: '192x192', type: 'image/png' },
+                        { src: 'assets/layout/logo.png', sizes: '256x256', type: 'image/png' },
+                        { src: 'assets/layout/logo.png', sizes: '384x384', type: 'image/png' },
+                        { src: 'assets/layout/logo.png', sizes: '512x512', type: 'image/png' },
+                    ]
+                });
+            }
+        }
+
+        // MEDIA SESSION ACTION HANDLERS
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.setActionHandler('play', togglePlay);
+            navigator.mediaSession.setActionHandler('pause', togglePlay);
+            navigator.mediaSession.setActionHandler('previoustrack', prevTrack);
+            navigator.mediaSession.setActionHandler('nexttrack', nextTrack);
+            navigator.mediaSession.setActionHandler('stop', () => {
+                audio.pause();
+                if (playIcon) playIcon.style.display = 'block';
+                if (pauseIcon) pauseIcon.style.display = 'none';
+            });
         }
 
         function generateWaveformPeaks(buffer) {
