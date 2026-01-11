@@ -80,9 +80,9 @@
 
             /* LAYOUT: CSS Grid for Rigid Stability */
             display: grid;
-            grid-template-columns: 180px 300px 1fr 120px;
-            /* Rigid Controls | Rigid Info | Remaining Space | Logo (2x) */
-            grid-template-areas: "controls info wave logo";
+            grid-template-columns: 180px 1fr 120px;
+            /* Rigid Controls | Remaining Space | Logo (2x) */
+            grid-template-areas: "controls wave logo";
             gap: 40px;
             /* Equal spacing */
             align-items: center;
@@ -392,10 +392,108 @@
                 right: 20px;
             }
         }
+
+        /* PLAYLIST CONTAINER */
+        #playlist-container {
+            position: fixed;
+            top: 40px;
+            left: 40px;
+            bottom: 200px;
+            width: 350px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 90;
+            overflow: hidden;
+            /* Hide scrollbar but allow content to move */
+            pointer-events: auto;
+            mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+            transition: opacity 0.5s ease;
+        }
+
+        .playlist-item {
+            font-family: 'Eurostile', sans-serif;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.4);
+            mix-blend-mode: difference;
+            transition: all 0.5s ease;
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+            flex-shrink: 0;
+            padding: 2px 0;
+        }
+
+        .playlist-item.active {
+            opacity: 1;
+            color: rgba(255, 255, 255, 1);
+            font-weight: bold;
+            transform: scale(1.02);
+            transform-origin: left;
+        }
+
+        .playlist-item.active {
+            opacity: 1;
+            color: rgba(255, 255, 255, 1);
+            font-weight: bold;
+            transform: scale(1.02);
+            transform-origin: left;
+        }
+
+        /* Adjust Player Grid to remove Info column */
+        #player {
+            /* ... previous styles ... */
+            grid-template-columns: 180px 1fr 120px;
+            grid-template-areas: "controls wave logo";
+        }
+
+        /* Remove .track-info related styles or hide them if needed, 
+           but since we removed the column from grid-template-areas, it might overlap if we don't handle it. 
+           Best to assume the HTML element is gone or display:none. 
+        */
+        .track-info {
+            display: none;
+        }
+
+        /* Ensure Canvas is behind playlist if needed, but in front of background. 
+           User asked for Cassette (Canvas) at the forefront of the playlist. 
+           Playlist is z-index 90. Canvas should be higher.
+        */
+        #three-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 95;
+            /* Above Playlist (90) */
+            pointer-events: auto;
+            /* Allow OrbitControls */
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            #playlist-container {
+                left: 20px;
+                top: 20px;
+                width: 250px;
+            }
+
+            #player {
+                grid-template-columns: 80px 1fr;
+                grid-template-areas:
+                    "logo controls"
+                    "wave wave";
+            }
+        }
     </style>
 </head>
 
 <body>
+    <div id="playlist-container"></div>
     <div id="player">
         <div class="controls">
             <button class="btn skip-btn" id="prevBtn">
@@ -417,9 +515,8 @@
                 </svg>
             </button>
         </div>
-        <div class="track-info">
-            <div class="title" id="songTitle">点击播放</div>
-            <div class="artist">中国 AI 研究院</div>
+        <div class="track-info" style="display: none;">
+            <!-- Removed Titles -->
         </div>
         <div class="waveform-container">
             <canvas id="waveformCanvas"></canvas>
@@ -578,6 +675,63 @@
         const playlist = rawPlaylist.map(t => ({ ...t, displayTitle: t.title }));
         let currentTrackIndex = 0;
 
+        // --- PLAYLIST RENDER LOGIC ---
+        const playlistContainer = document.getElementById('playlist-container');
+        const playlistItems = [];
+
+        function renderPlaylist() {
+            playlistContainer.innerHTML = '';
+            playlistItems.length = 0;
+            playlist.forEach((track, index) => {
+                const item = document.createElement('div');
+                item.className = 'playlist-item';
+                // Format: Title - Artist (Subtitle)
+                // User said "Title and subtitles in one line". 
+                // Assuming "artist" is the subtitle here "中国 AI 研究院".
+                item.textContent = `${track.displayTitle} — 中国 AI 研究院`;
+                item.addEventListener('click', () => {
+                    currentTrackIndex = index;
+                    loadTrack(currentTrackIndex);
+                    audio.play().catch(console.error);
+                    playIcon.style.display = 'none';
+                    pauseIcon.style.display = 'block';
+                });
+                playlistContainer.appendChild(item);
+                playlistItems.push(item);
+            });
+        }
+        renderPlaylist();
+
+        function updatePlaylistUI(index) {
+            playlistItems.forEach((item, i) => {
+                if (i === index) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+
+            // SCROLL LOGIC: "Tracks go up as the playlist is playing"
+            // We want the active track to be near the top.
+            // Let's say we keep the active track at offset 0 or slight offset.
+            const itemHeight = 35; // Approx height with gap
+            // Smoothly scroll the container
+            // Since we can't easily animate scrollTop with pure JS seamlessly without libs, 
+            // we can use scrollTo with behavior smooth.
+            // Or use transform on an inner container if we wanted complex motion, 
+            // but standard scrolling is safer for "list" behavior.
+
+            // Calculate position to put active track at the top
+            // Ensure we don't scroll past the end naturally handled by browser if using real scroll
+            // But user wants "opacity fades... as list gets lower". 
+            // So top items are visible.
+
+            if (playlistItems[index]) {
+                playlistItems[index].scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         const analyser = audioCtx.createAnalyser(); analyser.fftSize = 256;
         const source = audioCtx.createMediaElementSource(audio);
@@ -592,7 +746,8 @@
         async function loadTrack(index) {
             const track = playlist[index];
             audio.src = track.file;
-            songTitleEl.textContent = track.displayTitle;
+            // songTitleEl.textContent = track.displayTitle; // REMOVED
+            updatePlaylistUI(index);
             if (sideTextMaterial) {
                 sideTextMaterial.map = createSideTexture(track.displayTitle);
                 sideTextMaterial.needsUpdate = true;
@@ -682,6 +837,8 @@
             document.querySelector('.logo-container').addEventListener('click', () => {
                 if (overlay) overlay.style.display = 'flex';
                 if (typeof cassetteBox !== 'undefined') cassetteBox.visible = false;
+                // Hide Playlist
+                if (playlistContainer) playlistContainer.style.opacity = '0';
                 startTypewriter();
             });
         }
@@ -690,6 +847,8 @@
             document.querySelector('.close-btn').addEventListener('click', () => {
                 if (overlay) overlay.style.display = 'none';
                 if (typeof cassetteBox !== 'undefined') cassetteBox.visible = true;
+                // Show Playlist
+                if (playlistContainer) playlistContainer.style.opacity = '1';
                 if (typeInterval) clearInterval(typeInterval);
             });
         }
@@ -784,11 +943,11 @@
         prevBtn.addEventListener('click', prevTrack);
         audio.addEventListener('ended', nextTrack);
 
-        const scene = new THREE.Scene(); scene.background = new THREE.Color(0x000000);
+        const scene = new THREE.Scene(); // scene.background removed for transparency
         const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
         camera.position.set(0, 0, 24);
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.domElement.id = 'three-canvas';
         renderer.setPixelRatio(window.devicePixelRatio);
@@ -894,14 +1053,17 @@
                 }
                 if (transitionProgress < 1.0) {
                     transitionProgress += delta * 0.005; if (transitionProgress > 1) transitionProgress = 1;
-                    scene.background.lerpColors(currentBgColor, targetBgColor, transitionProgress);
+                    const col = new THREE.Color().lerpColors(currentBgColor, targetBgColor, transitionProgress);
+                    document.body.style.backgroundColor = col.getStyle();
                     if (transitionProgress >= 1) currentBgColor.copy(targetBgColor);
                 }
 
                 // DYNAMIC TEXT COLOR
                 if (overlay && overlay.style.display !== 'none') {
                     const bgHSL = { h: 0, s: 0, l: 0 };
-                    scene.background.getHSL(bgHSL);
+                    // scene.background is null now, use currentBgColor or parse body style. 
+                    // Using currentBgColor as it tracks the state.
+                    currentBgColor.getHSL(bgHSL);
                     let textS = Math.min(1.0, bgHSL.s + 0.4);
                     let textL = bgHSL.l * 0.4;
                     if (bgHSL.l < 0.2) { textL = 0.8; textS = 0.2; }
