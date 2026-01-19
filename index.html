@@ -1242,7 +1242,8 @@
                         filterString += ` contrast(${1 + aberrationIntensity * 0.2})`;
                     }
 
-                    document.body.style.filter = filterString;
+                    // Apply filter to canvas only to avoid affecting player UI
+                    renderer.domElement.style.filter = filterString;
 
                     // Blend color with reduced opacity when showing photo
                     const blendedColor = new THREE.Color().copy(finalColor);
@@ -1252,8 +1253,8 @@
                     blendedColor.setHSL(blendedHsl.h, blendedHsl.s, blendedHsl.l);
                     document.body.style.backgroundColor = blendedColor.getStyle();
                 } else {
-                    // Pure color mode - no filter effects
-                    document.body.style.filter = 'none';
+                    // Pure color mode - no filter effects on canvas
+                    renderer.domElement.style.filter = 'none';
                     document.body.style.backgroundColor = finalColor.getStyle();
                 }
 
