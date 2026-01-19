@@ -408,11 +408,13 @@
             top: 40px;
             left: 40px;
             bottom: 200px;
-            width: 350px;
+            width: 600px;
+            /* Increased from 350px to give more space */
             display: flex;
             flex-direction: column;
             gap: 15px;
-            z-index: 90;
+            z-index: 2000;
+            /* High Z-index to ensure clickability */
             overflow: hidden;
             /* Hide scrollbar but allow content to move */
             pointer-events: auto;
@@ -431,8 +433,9 @@
             cursor: pointer;
             /* Make it clear it's clickable */
             cursor: pointer;
-            white-space: normal;
-            /* Allow wrapping for long titles */
+            cursor: pointer;
+            white-space: nowrap;
+            /* Do not wrap */
             overflow: visible;
             /* Show full text */
             line-height: 1.3;
