@@ -993,7 +993,7 @@
         loadTrack(currentTrackIndex);
 
         const loader = new THREE.TextureLoader();
-        loader.load('./assets/images/ngeo.png', (texture) => {
+        loader.load('./assets/images/ngeo-1.png', (texture) => {
             texture.colorSpace = THREE.SRGBColorSpace;
             if (texture.image) {
                 if (texture.image.complete) extractColors(texture.image); else texture.image.onload = () => extractColors(texture.image);
@@ -1026,6 +1026,9 @@
         document.body.style.backgroundSize = 'cover';
         document.body.style.backgroundPosition = 'center';
         document.body.style.backgroundRepeat = 'no-repeat';
+        document.body.style.backgroundAttachment = 'fixed';
+        document.body.style.width = '100vw';
+        document.body.style.height = '100vh';
 
         function animate() {
             requestAnimationFrame(animate);
