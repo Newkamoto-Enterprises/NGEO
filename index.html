@@ -629,48 +629,44 @@
         window.addEventListener('resize', resizeWaveform);
         resizeWaveform(); // Init
 
-        const paperTitles = [
-            '深度求索-R1：高效推理',
-            '视觉自回归建模：缩放定律',
-            '智谱 GLM-4：自主智能体流',
-            '百川智能-3：主权计算范式',
-            '通义千问-72B：开源生态主导',
-            '大模型分层推理机制',
-            '盘古气象：科学智能',
-            '书生·浦语：混合模态增强',
-            '文心一言-4：知识增强检索',
-            '多维认知架构：触觉反馈',
-            '量子纠缠神经网络：超光速通信',
-            '非冯·诺依曼计算：类脑芯片',
-            '生成式对抗网络：动态防御',
-            '无监督学习：暗知识挖掘',
-            '自适应权重矩阵：稀疏化',
-            '联邦学习：隐私保护前沿',
-            '神经辐射场：实时渲染',
-            '图神经网络：因果推断',
-            '强化学习：多智能体博弈',
-            '元学习：少样本泛化'
+        // Playlist with actual track files in correct order
+        const rawPlaylist = [
+            { file: 'assets/audio/TRACKS/1 Attention Is All You Need.mp3', title: 'Attention Is All You Need' },
+            { file: 'assets/audio/TRACKS/2 Turbulences.mp3', title: 'Turbulences' },
+            { file: 'assets/audio/TRACKS/3 Superstar Forever.mp3', title: 'Superstar Forever' },
+            { file: 'assets/audio/TRACKS/4 Never good enough.mp3', title: 'Never good enough' },
+            { file: 'assets/audio/TRACKS/5 Signal.mp3', title: 'Signal' },
+            { file: 'assets/audio/TRACKS/6 Equinox.mp3', title: 'Equinox' },
+            { file: 'assets/audio/TRACKS/7 Atlanta Turbo.mp3', title: 'Atlanta Turbo' },
+            { file: 'assets/audio/TRACKS/8 Gain Of Function.mp3', title: 'Gain Of Function' },
+            { file: 'assets/audio/TRACKS/9 The Garden.mp3', title: 'The Garden' },
+            { file: 'assets/audio/TRACKS/10  Ascending.mp3', title: 'Ascending' },
+            { file: 'assets/audio/TRACKS/11 Archaic V1.mp3', title: 'Archaic V1' },
+            { file: 'assets/audio/TRACKS/12 Archaic V2.mp3', title: 'Archaic V2' },
+            { file: 'assets/audio/TRACKS/13 AI Never Sleeps.mp3', title: 'AI Never Sleeps' },
+            { file: 'assets/audio/TRACKS/14 Drone Colonies.mp3', title: 'Drone Colonies' },
+            { file: 'assets/audio/TRACKS/15 Revolve Silently.mp3', title: 'Revolve Silently' },
+            { file: 'assets/audio/TRACKS/16 Echelon.mp3', title: 'Echelon' },
+            { file: 'assets/audio/TRACKS/17 Let\'s Dance.mp3', title: 'Let\'s Dance' },
+            { file: 'assets/audio/TRACKS/18 Sinofuture.mp3', title: 'Sinofuture' },
+            { file: 'assets/audio/TRACKS/19 Acidic.mp3', title: 'Acidic' },
+            { file: 'assets/audio/TRACKS/20 Remember.mp3', title: 'Remember' },
+            { file: 'assets/audio/TRACKS/21 Reward Is Enough.mp3', title: 'Reward Is Enough' },
+            { file: 'assets/audio/TRACKS/22 Comico.mp3', title: 'Comico' },
+            { file: 'assets/audio/TRACKS/23 Vectors.mp3', title: 'Vectors' },
+            { file: 'assets/audio/TRACKS/24 Computers & Cognition.mp3', title: 'Computers & Cognition' },
+            { file: 'assets/audio/TRACKS/25 Mode Collapse.mp3', title: 'Mode Collapse' },
+            { file: 'assets/audio/TRACKS/26 Situational Awareness.mp3', title: 'Situational Awareness' },
+            { file: 'assets/audio/TRACKS/27 Archaic V3.mp3', title: 'Archaic V3' },
+            { file: 'assets/audio/TRACKS/28 Gradient Descent.mp3', title: 'Gradient Descent' },
+            { file: 'assets/audio/TRACKS/29 Wonderland.mp3', title: 'Wonderland' },
+            { file: 'assets/audio/TRACKS/30 Remember Again.mp3', title: 'Remember Again' },
+            { file: 'assets/audio/TRACKS/31 Trust Propagation.mp3', title: 'Trust Propagation' },
+            { file: 'assets/audio/TRACKS/32 Titans.mp3', title: 'Titans' },
+            { file: 'assets/audio/TRACKS/33 New Life.mp3', title: 'New Life' },
+            { file: 'assets/audio/TRACKS/34 Jet 2 Holiday.mp3', title: 'Jet 2 Holiday' },
+            { file: 'assets/audio/TRACKS/35 Entendre Eteindre.mp3', title: 'Entendre Eteindre' }
         ];
-
-        const rawPlaylist = [];
-        const totalTracks = 32;
-
-        for (let i = 1; i <= totalTracks; i++) {
-            const fileId = String(i).padStart(3, '0');
-            const titleIndex = (i - 1) % paperTitles.length;
-            rawPlaylist.push({
-                file: `assets/audio/${fileId}.mp3`,
-                title: paperTitles[titleIndex]
-            });
-        }
-
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
-        shuffleArray(rawPlaylist);
 
         const playlist = rawPlaylist.map(t => ({ ...t, displayTitle: t.title }));
         let currentTrackIndex = 0;
@@ -1010,16 +1006,26 @@
         let lastTime = Date.now();
 
         const artworks = [
-            './assets/images/ngeo.png',
-            './assets/images/parking.jpeg',
-            './assets/images/louvre.png?v=2',
-            './assets/images/hollywood.jpeg',
-            './assets/images/mountain.jpeg',
-            './assets/images/quad.jpeg'
+            './assets/images/ngeo-1.png',
+            './assets/images/hollywood.png',
+            './assets/images/studio_2.jpeg',
+            './assets/images/studio_3.jpeg',
+            './assets/images/parking.jpeg'
         ];
         let currentArtIndex = 0;
         let lastArtChangeTime = 0;
         let oysterOp = 0;
+
+        // Random Background Selection (before play)
+        const backgrounds = [
+            './assets/images/background/NGEO_STUDIO.jpeg',
+            './assets/images/background/NGEO_STUDIO_!.jpeg'
+        ];
+        const randomBg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+        document.body.style.backgroundImage = `url('${randomBg}')`;
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundPosition = 'center';
+        document.body.style.backgroundRepeat = 'no-repeat';
 
         function animate() {
             requestAnimationFrame(animate);
