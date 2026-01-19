@@ -80,16 +80,17 @@
 
             /* LAYOUT: CSS Grid for Rigid Stability */
             display: grid;
-            grid-template-columns: 200px 180px 1fr 120px;
-            /* Track Info | Controls | Wave | Logo */
-            grid-template-areas: "track-info controls wave logo";
+            grid-template-columns: 180px 1fr 120px;
+            /* Controls | Wave | Logo */
+            grid-template-areas: "controls wave logo";
             gap: 20px;
             /* Tighter spacing */
             align-items: center;
             justify-content: start;
             /* Align grid to start */
 
-            padding: 0 40px;
+            padding: 0 50px;
+            /* Better padding */
             box-sizing: border-box;
 
             transform: translateX(-50%);
@@ -506,14 +507,6 @@
 <body>
     <div id="playlist-container"></div>
     <div id="player">
-        <div class="track-info-container">
-            <div id="trackName"
-                style="font-family: 'Eurostile', sans-serif; font-size: 16px; color: rgba(255,255,255,0.9); mix-blend-mode: difference;">
-                Track Name</div>
-            <div id="timeDisplay"
-                style="font-family: 'Eurostile', monospace; font-size: 14px; color: rgba(255,255,255,0.7); mix-blend-mode: difference;">
-                00:00 / 00:00</div>
-        </div>
         <div class="controls">
             <button class="btn skip-btn" id="prevBtn">
                 <svg viewBox="0 0 24 24">
@@ -724,10 +717,11 @@
             playlist.forEach((track, index) => {
                 const item = document.createElement('div');
                 item.className = 'playlist-item';
-                // Format: Title - Artist (Subtitle)
-                // User said "Title and subtitles in one line". 
-                // Assuming "artist" is the subtitle here "中国 AI 研究院".
-                item.textContent = `${track.displayTitle} — 中国 AI 研究院`;
+                item.dataset.index = index;
+                item.innerHTML = `
+                    <span class="playlist-title">${track.displayTitle} — 中国 AI 研究院</span>
+                    <span class="playlist-time" style="opacity: 0; margin-left: 10px;">00:00 / 00:00</span>
+                `;
                 item.addEventListener('click', () => {
                     currentTrackIndex = index;
                     loadTrack(currentTrackIndex);
@@ -743,10 +737,13 @@
 
         function updatePlaylistUI(index) {
             playlistItems.forEach((item, i) => {
+                const timeEl = item.querySelector('.playlist-time');
                 if (i === index) {
                     item.classList.add('active');
+                    if (timeEl) timeEl.style.opacity = '1';
                 } else {
                     item.classList.remove('active');
+                    if (timeEl) timeEl.style.opacity = '0';
                 }
             });
 
@@ -1016,8 +1013,7 @@
             audio.play().catch(e => console.error(e));
         });
 
-        // Time display update
-        const timeDisplay = document.getElementById('timeDisplay');
+        // Time display update - show time next to active playlist item
         function formatTime(seconds) {
             const mins = Math.floor(seconds / 60);
             const secs = Math.floor(seconds % 60);
@@ -1026,7 +1022,14 @@
         audio.addEventListener('timeupdate', () => {
             const current = formatTime(audio.currentTime);
             const total = formatTime(audio.duration || 0);
-            timeDisplay.textContent = `${current} / ${total}`;
+            const timeString = `${current} / ${total}`;
+
+            // Update active playlist item time
+            const activeItem = playlistItems[currentTrackIndex];
+            if (activeItem) {
+                const timeEl = activeItem.querySelector('.playlist-time');
+                if (timeEl) timeEl.textContent = timeString;
+            }
         });
 
         const scene = new THREE.Scene(); // scene.background removed for transparency
