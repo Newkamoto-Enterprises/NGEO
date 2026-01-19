@@ -590,21 +590,39 @@
             } catch (e) { colorPalette = [new THREE.Color(0xcccccc)]; }
         }
 
-        function createSideTexture(text) {
+        function createSideTexture(text, textZh) {
             const canvas = document.createElement('canvas');
             canvas.width = 256; canvas.height = 2048;
             const ctx = canvas.getContext('2d');
             ctx.fillStyle = '#080808'; ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = 'rgba(255,255,255,0.03)';
             for (let i = 0; i < 100; i++) ctx.fillRect(Math.random() * canvas.width, Math.random() * canvas.height, 4, 4);
-            const fontSize = 96;
-            ctx.font = `bold ${fontSize}px "PingFang SC", "Microsoft YaHei", sans-serif`;
-            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-            ctx.save(); ctx.translate(canvas.width / 2, canvas.height / 2); ctx.rotate(Math.PI / 2);
-            ctx.fillStyle = 'rgba(0,0,0,0.8)'; ctx.fillText(text, 4, 4);
-            ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.fillText(text, -2, -2);
+
+            ctx.save();
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.rotate(Math.PI / 2);
+            ctx.textAlign = 'center';
+
+            // English text (top)
+            const fontSizeEn = 70;
+            ctx.font = `bold ${fontSizeEn}px "PingFang SC", "Microsoft YaHei", sans-serif`;
+            ctx.textBaseline = 'bottom';
+            const offsetY = -30;
+            ctx.fillStyle = 'rgba(0,0,0,0.8)'; ctx.fillText(text, 4, offsetY + 4);
+            ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.fillText(text, -2, offsetY - 2);
             ctx.shadowBlur = 8; ctx.shadowColor = 'rgba(0,0,0,0.5)';
-            ctx.fillStyle = '#E0D8B0'; ctx.fillText(text, 0, 0);
+            ctx.fillStyle = '#E0D8B0'; ctx.fillText(text, 0, offsetY);
+
+            // Chinese text (bottom)
+            const fontSizeZh = 60;
+            ctx.font = `bold ${fontSizeZh}px "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif`;
+            ctx.textBaseline = 'top';
+            const offsetYZh = 30;
+            ctx.shadowBlur = 8;
+            ctx.fillStyle = 'rgba(0,0,0,0.8)'; ctx.fillText(textZh, 4, offsetYZh + 4);
+            ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.fillText(textZh, -2, offsetYZh - 2);
+            ctx.fillStyle = '#E0D8B0'; ctx.fillText(textZh, 0, offsetYZh);
+
             ctx.restore();
             const texture = new THREE.CanvasTexture(canvas); texture.colorSpace = THREE.SRGBColorSpace; return texture;
         }
@@ -631,41 +649,41 @@
 
         // Playlist with actual track files in correct order
         const rawPlaylist = [
-            { file: 'assets/audio/1_Attention_Is_All_You_Need.mp3', title: 'Attention Is All You Need' },
-            { file: 'assets/audio/2_Turbulences.mp3', title: 'Turbulences' },
-            { file: 'assets/audio/3_Superstar_Forever.mp3', title: 'Superstar Forever' },
-            { file: 'assets/audio/4_Never_good_enough.mp3', title: 'Never good enough' },
-            { file: 'assets/audio/5_Signal.mp3', title: 'Signal' },
-            { file: 'assets/audio/6_Equinox.mp3', title: 'Equinox' },
-            { file: 'assets/audio/7_Atlanta_Turbo.mp3', title: 'Atlanta Turbo' },
-            { file: 'assets/audio/8_Gain_Of_Function.mp3', title: 'Gain Of Function' },
-            { file: 'assets/audio/9_The_Garden.mp3', title: 'The Garden' },
-            { file: 'assets/audio/10__Ascending.mp3', title: 'Ascending' },
-            { file: 'assets/audio/11_Archaic_V1.mp3', title: 'Archaic V1' },
-            { file: 'assets/audio/12_Archaic_V2.mp3', title: 'Archaic V2' },
-            { file: 'assets/audio/13_AI_Never_Sleeps.mp3', title: 'AI Never Sleeps' },
-            { file: 'assets/audio/14_Drone_Colonies.mp3', title: 'Drone Colonies' },
-            { file: 'assets/audio/15_Revolve_Silently.mp3', title: 'Revolve Silently' },
-            { file: 'assets/audio/16_Echelon.mp3', title: 'Echelon' },
-            { file: 'assets/audio/17_Lets_Dance.mp3', title: 'Let\'s Dance' },
-            { file: 'assets/audio/18_Sinofuture.mp3', title: 'Sinofuture' },
-            { file: 'assets/audio/19_Acidic.mp3', title: 'Acidic' },
-            { file: 'assets/audio/20_Remember.mp3', title: 'Remember' },
-            { file: 'assets/audio/21_Reward_Is_Enough.mp3', title: 'Reward Is Enough' },
-            { file: 'assets/audio/22_Comico.mp3', title: 'Comico' },
-            { file: 'assets/audio/23_Vectors.mp3', title: 'Vectors' },
-            { file: 'assets/audio/24_Computers_and_Cognition.mp3', title: 'Computers & Cognition' },
-            { file: 'assets/audio/25_Mode_Collapse.mp3', title: 'Mode Collapse' },
-            { file: 'assets/audio/26_Situational_Awareness.mp3', title: 'Situational Awareness' },
-            { file: 'assets/audio/27_Archaic_V3.mp3', title: 'Archaic V3' },
-            { file: 'assets/audio/28_Gradient_Descent.mp3', title: 'Gradient Descent' },
-            { file: 'assets/audio/29_Wonderland.mp3', title: 'Wonderland' },
-            { file: 'assets/audio/30_Remember_Again.mp3', title: 'Remember Again' },
-            { file: 'assets/audio/31_Trust_Propagation.mp3', title: 'Trust Propagation' },
-            { file: 'assets/audio/32_Titans.mp3', title: 'Titans' },
-            { file: 'assets/audio/33_New_Life.mp3', title: 'New Life' },
-            { file: 'assets/audio/34_Jet_2_Holiday.mp3', title: 'Jet 2 Holiday' },
-            { file: 'assets/audio/35_Entendre_Eteindre.mp3', title: 'Entendre Eteindre' }
+            { file: 'assets/audio/1_Attention_Is_All_You_Need.mp3', title: 'Attention Is All You Need', titleZh: '注意力就是一切' },
+            { file: 'assets/audio/2_Turbulences.mp3', title: 'Turbulences', titleZh: '湍流' },
+            { file: 'assets/audio/3_Superstar_Forever.mp3', title: 'Superstar Forever', titleZh: '永远的超级巨星' },
+            { file: 'assets/audio/4_Never_good_enough.mp3', title: 'Never good enough', titleZh: '永不满足' },
+            { file: 'assets/audio/5_Signal.mp3', title: 'Signal', titleZh: '信号' },
+            { file: 'assets/audio/6_Equinox.mp3', title: 'Equinox', titleZh: '春分' },
+            { file: 'assets/audio/7_Atlanta_Turbo.mp3', title: 'Atlanta Turbo', titleZh: '亚特兰大涡轮' },
+            { file: 'assets/audio/8_Gain_Of_Function.mp3', title: 'Gain Of Function', titleZh: '功能增益' },
+            { file: 'assets/audio/9_The_Garden.mp3', title: 'The Garden', titleZh: '花园' },
+            { file: 'assets/audio/10__Ascending.mp3', title: 'Ascending', titleZh: '上升' },
+            { file: 'assets/audio/11_Archaic_V1.mp3', title: 'Archaic V1', titleZh: '古老 V1' },
+            { file: 'assets/audio/12_Archaic_V2.mp3', title: 'Archaic V2', titleZh: '古老 V2' },
+            { file: 'assets/audio/13_AI_Never_Sleeps.mp3', title: 'AI Never Sleeps', titleZh: 'AI 永不休眠' },
+            { file: 'assets/audio/14_Drone_Colonies.mp3', title: 'Drone Colonies', titleZh: '无人机殖民地' },
+            { file: 'assets/audio/15_Revolve_Silently.mp3', title: 'Revolve Silently', titleZh: '静静旋转' },
+            { file: 'assets/audio/16_Echelon.mp3', title: 'Echelon', titleZh: '梯队' },
+            { file: 'assets/audio/17_Lets_Dance.mp3', title: 'Let\'s Dance', titleZh: '让我们跳舞' },
+            { file: 'assets/audio/18_Sinofuture.mp3', title: 'Sinofuture', titleZh: '华夏未来' },
+            { file: 'assets/audio/19_Acidic.mp3', title: 'Acidic', titleZh: '酸性' },
+            { file: 'assets/audio/20_Remember.mp3', title: 'Remember', titleZh: '记住' },
+            { file: 'assets/audio/21_Reward_Is_Enough.mp3', title: 'Reward Is Enough', titleZh: '奖励已足够' },
+            { file: 'assets/audio/22_Comico.mp3', title: 'Comico', titleZh: '喜剧' },
+            { file: 'assets/audio/23_Vectors.mp3', title: 'Vectors', titleZh: '向量' },
+            { file: 'assets/audio/24_Computers_and_Cognition.mp3', title: 'Computers & Cognition', titleZh: '计算与认知' },
+            { file: 'assets/audio/25_Mode_Collapse.mp3', title: 'Mode Collapse', titleZh: '模式崩溃' },
+            { file: 'assets/audio/26_Situational_Awareness.mp3', title: 'Situational Awareness', titleZh: '态势感知' },
+            { file: 'assets/audio/27_Archaic_V3.mp3', title: 'Archaic V3', titleZh: '古老 V3' },
+            { file: 'assets/audio/28_Gradient_Descent.mp3', title: 'Gradient Descent', titleZh: '梯度下降' },
+            { file: 'assets/audio/29_Wonderland.mp3', title: 'Wonderland', titleZh: '仙境' },
+            { file: 'assets/audio/30_Remember_Again.mp3', title: 'Remember Again', titleZh: '再次记住' },
+            { file: 'assets/audio/31_Trust_Propagation.mp3', title: 'Trust Propagation', titleZh: '信任传播' },
+            { file: 'assets/audio/32_Titans.mp3', title: 'Titans', titleZh: '泰坦' },
+            { file: 'assets/audio/33_New_Life.mp3', title: 'New Life', titleZh: '新生活' },
+            { file: 'assets/audio/34_Jet_2_Holiday.mp3', title: 'Jet 2 Holiday', titleZh: '喷气假期' },
+            { file: 'assets/audio/35_Entendre_Eteindre.mp3', title: 'Entendre Eteindre', titleZh: '听与熄灭' }
         ];
 
         const playlist = rawPlaylist.map(t => ({ ...t, displayTitle: t.title }));
@@ -745,7 +763,7 @@
             // songTitleEl.textContent = track.displayTitle; // REMOVED
             updatePlaylistUI(index);
             if (sideTextMaterial) {
-                sideTextMaterial.map = createSideTexture(track.displayTitle);
+                sideTextMaterial.map = createSideTexture(track.displayTitle, track.titleZh);
                 sideTextMaterial.needsUpdate = true;
             }
 
