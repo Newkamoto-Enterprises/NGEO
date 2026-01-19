@@ -1312,7 +1312,7 @@
                 const zoomDuration = 2200;
                 const progress = Math.min((now - introStartTime) / zoomDuration, 1.0);
                 const ease = progress * progress * progress;
-                const s = 0.28 + ((1.1 - 0.28) * ease); // Reduced from 1.25
+                const s = 0.28 + ((0.75 - 0.28) * ease); // Significantly reduced max scale (was 1.1)
                 cassetteBox.scale.set(s, s, s);
                 cassetteBox.position.lerpVectors(startPos, new THREE.Vector3(0, 0, 0), ease);
                 cassetteBox.rotation.x = THREE.MathUtils.lerp(startRot.x, 0, ease);
@@ -1323,7 +1323,7 @@
                 const settleDuration = 4000;
                 const progress = Math.min((now - introStartTime) / settleDuration, 1.0);
                 const ease = Math.sin((progress * Math.PI) / 2);
-                const s = 1.1 - (0.1 * ease); // Adjusted to match new max
+                const s = 0.75 + (0.25 * ease); // Gently grow to final size 1.0
                 cassetteBox.scale.set(s, s, s);
                 cassetteBox.rotation.y += 0.02 + (0.0007 - 0.02) * ease;
                 cassetteBox.rotation.x = 0; cassetteBox.rotation.z = 0; cassetteBox.position.set(0, 0, 0);
