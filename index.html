@@ -603,21 +603,21 @@
             ctx.rotate(Math.PI / 2);
             ctx.textAlign = 'center';
 
-            // English text (top) - 30% larger
+            // English text (top) - 30% larger, with margin
             const fontSizeEn = 91; // 70 * 1.3
             ctx.font = `bold ${fontSizeEn}px "PingFang SC", "Microsoft YaHei", sans-serif`;
             ctx.textBaseline = 'bottom';
-            const offsetY = -40;
+            const offsetY = -10; // Closer to center, smaller gap
             ctx.fillStyle = 'rgba(0,0,0,0.8)'; ctx.fillText(text, 4, offsetY + 4);
             ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.fillText(text, -2, offsetY - 2);
             ctx.shadowBlur = 8; ctx.shadowColor = 'rgba(0,0,0,0.5)';
             ctx.fillStyle = '#E0D8B0'; ctx.fillText(text, 0, offsetY);
 
-            // Chinese text (bottom) - 30% larger
+            // Chinese text (bottom) - 30% larger, with margin
             const fontSizeZh = 78; // 60 * 1.3
             ctx.font = `bold ${fontSizeZh}px "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif`;
             ctx.textBaseline = 'top';
-            const offsetYZh = 40;
+            const offsetYZh = 10; // Closer to center, smaller gap
             ctx.shadowBlur = 8;
             ctx.fillStyle = 'rgba(0,0,0,0.8)'; ctx.fillText(textZh, 4, offsetYZh + 4);
             ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.fillText(textZh, -2, offsetYZh - 2);
