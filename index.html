@@ -414,10 +414,13 @@
 
         .playlist-item {
             font-family: 'Eurostile', sans-serif;
-            font-size: 16px;
+            font-size: 20px;
+            /* Bigger font */
             color: rgba(255, 255, 255, 0.4);
             mix-blend-mode: difference;
             transition: all 0.5s ease;
+            cursor: pointer;
+            /* Make it clear it's clickable */
             cursor: pointer;
             white-space: nowrap;
             overflow: hidden;
@@ -507,6 +510,12 @@
                 </svg>
                 <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none">
                     <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                </svg>
+            </button>
+            <button class="btn skip-btn" id="shuffleBtn" title="Shuffle">
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z" />
                 </svg>
             </button>
             <button class="btn skip-btn" id="nextBtn">
@@ -960,10 +969,37 @@
             pauseIcon.style.display = 'block';
         }
 
+
+        let isShuffleEnabled = false;
+        const shuffleBtn = document.getElementById('shuffleBtn');
+
+        shuffleBtn.addEventListener('click', () => {
+            isShuffleEnabled = !isShuffleEnabled;
+            shuffleBtn.style.opacity = isShuffleEnabled ? '1.0' : '0.5';
+        });
+
         playBtn.addEventListener('click', togglePlay);
-        nextBtn.addEventListener('click', nextTrack);
+        nextBtn.addEventListener('click', () => {
+            if (isShuffleEnabled) {
+                currentTrackIndex = Math.floor(Math.random() * playlist.length);
+            } else {
+                currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+            }
+            loadTrack(currentTrackIndex);
+            audio.play().catch(e => console.error(e));
+            playIcon.style.display = 'none';
+            pauseIcon.style.display = 'block';
+        });
         prevBtn.addEventListener('click', prevTrack);
-        audio.addEventListener('ended', nextTrack);
+        audio.addEventListener('ended', () => {
+            if (isShuffleEnabled) {
+                currentTrackIndex = Math.floor(Math.random() * playlist.length);
+            } else {
+                currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+            }
+            loadTrack(currentTrackIndex);
+            audio.play().catch(e => console.error(e));
+        });
 
         const scene = new THREE.Scene(); // scene.background removed for transparency
         const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -1015,22 +1051,7 @@
 
         const cassetteBox = new THREE.Mesh(geometry, materials);
         cassetteBox.castShadow = true;
-        cassetteBox.cursor = 'pointer'; // Make it look clickable
         scene.add(cassetteBox);
-
-        // Add click handler to cassette for track switching
-        const raycaster = new THREE.Raycaster();
-        const mouse = new THREE.Vector2();
-
-        renderer.domElement.addEventListener('click', (event) => {
-            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObject(cassetteBox);
-            if (intersects.length > 0) {
-                nextTrack(); // Advance to next track when cassette clicked
-            }
-        });
 
         loadTrack(currentTrackIndex);
 
