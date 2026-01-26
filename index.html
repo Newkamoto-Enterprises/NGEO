@@ -507,10 +507,86 @@
                     "wave wave";
             }
         }
+
+        /* SOCIAL BADGES */
+        #social-container {
+            position: fixed;
+            top: 40px;
+            right: 40px;
+            display: flex;
+            flex-direction: row;
+            gap: 15px;
+            z-index: 1500;
+        }
+
+        .social-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            /* Glassmorphism matching Player */
+            background: rgba(20, 20, 20, 0.01);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.5);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.3),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+            
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .social-btn:hover {
+            transform: scale(1.1);
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .social-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        @media (max-width: 768px) {
+            #social-container {
+                top: 20px;
+                right: 20px;
+                gap: 10px;
+            }
+            .social-btn {
+                width: 36px;
+                height: 36px;
+            }
+            .social-btn svg {
+                width: 18px;
+                height: 18px;
+            }
+        }
     </style>
 </head>
 
 <body>
+    <div id="social-container">
+        <a href="https://open.spotify.com/artist/3gmyzCftRBv4VTU90nzbqS" target="_blank" class="social-btn" title="Spotify">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.299z"/>
+            </svg>
+        </a>
+        <a href="https://music.apple.com/us/artist/ngeo/1871642594" target="_blank" class="social-btn" title="Apple Music">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.573 16.94c-.496.22-1.503.228-2.673-.442-1.97-1.127-1.938-2.578-1.938-2.834 0-.177.027-.362.054-.539.522-3.414 1.293-6.66 1.293-6.66s.098-.442-.257-.655c-.354-.212-1.116.035-1.922.398l-4.704 2.126c-.638.292-.762.664-.815.939-.31 1.408-.629 3.012-.903 4.411-.08.434-.098.885-.098.885s-.088.753.815 1.506c1.196.992 2.303.496 2.657.257.442-.292.682-.939.682-1.63 0-1.878-1.577-3.419-3.525-3.419-.514 0-.913.097-1.258.239.15-.753.469-2.321.656-3.153l3.658-1.639c-.195 1.462-1.178 7.378-1.311 8.246-.177 1.143-1.001 2.4-2.808 2.312-3.809-.186-3.57-5.183.266-7.052 1.94-1.001 5.483-2.613 6.643-3.135 1.16-.523 2.01-.266 2.347.115.337.381.186 1.488.186 1.488s-.593 3.862-1.01 6.556c-.053.337-.106.691-.106 1.054 0 .913.434 1.444.912 1.444.337 0 .585-.142.797-.266.301-.177.833-.62.833-.62s.106-.115.124-.027c.018.089.044.248.044.248z"/>
+            </svg>
+        </a>
+    </div>
     <div id="playlist-container"></div>
     <div id="player">
         <div class="controls">
